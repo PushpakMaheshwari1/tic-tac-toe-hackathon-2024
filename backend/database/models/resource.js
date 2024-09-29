@@ -83,4 +83,4 @@ const bookSellSchema = new mongoose.Schema(
 
 const bookModel = mongoose.model("borrowLendBook", borrowLendBookSchema);
 const bookSell = mongoose.model("bookSell",bookSellSchema);
-export default bookModel;
+export default {bookModel,bookSell};

@@ -1,7 +1,7 @@
 import userService from "../services/user-service.js";
-import userModel from "../database/models/user.js";
-import QuoteRepository from "../repositories/quote-repository.js"; // Import quote repository
-import BookmarkRepository from "../repositories/bookmark-repository.js"; // Import bookmark repository
+import userModel from "../database/repository/user-repository.js";
+import QuoteRepository from "../database/repository/quote-repository.js"; 
+import BookmarkRepository from "../database/repository/bookmark-repository.js"; 
 
 const user = (app) => {
   const service = new userService();
@@ -51,9 +51,10 @@ const user = (app) => {
     }
   });
 
-  app.get("/quotes", async (req, res, next) => {
+  app.get("/quotes/:userId", async (req, res, next) => {
     try {
-      const userId = req.user.userId; // Assuming userId comes from middleware
+      const userId = req.params.userId; // Assuming userId comes from middleware
+      console.log(userId); // To ensure you are getting the userId from params
       const quotes = await quoteRepo.getQuotes(userId);
       return res.json(quotes);
     } catch (err) {
@@ -85,16 +86,36 @@ const user = (app) => {
   });
 
   // CRUD for Bookmarks
-  app.post("/bookmarks", async (req, res, next) => {
-    try {
-      const userId = req.user.userId; // Assuming userId comes from middleware
-      const bookmarkData = req.body;
-      const user = await bookmarkRepo.createBookmark(userId, bookmarkData);
-      return res.json(user);
-    } catch (err) {
-      next(err);
+app.post("/bookmarks", async (req, res, next) => {
+  try {
+    const userId = "40c46c8c-fc57-4678-b1b8-eb407eb80144"; // For testing purposes
+
+    // Extract bookmark data from the request body
+    const { bookId } = req.body;
+
+    if (!bookId) {
+      return res.status(400).json({ message: "Book ID is required." });
     }
-  });
+
+    // Find the user by their userId
+    const user = await userModel.findOne({ userId });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Push the new bookmark into the user's bookmarks array
+    user.bookmarks.push({ bookId });
+
+    // Save the updated user document
+    await user.save();
+
+    return res.status(201).json(user.bookmarks); // Return the updated bookmarks list
+  } catch (err) {
+    next(err);
+  }
+});
+
 
   app.get("/bookmarks", async (req, res, next) => {
     try {

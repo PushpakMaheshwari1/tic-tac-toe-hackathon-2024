@@ -1,6 +1,38 @@
 import mongoose from "mongoose";
 import { v4 as uuid } from "uuid";
 
+const quotesSchema = new mongoose.Schema({
+  quotesId: {
+    type: String,
+    require: true,
+    unique: true,
+    default: uuid,
+  },
+  userId: {
+    type: String,
+  },
+  quotesDesc: {
+    type: String,
+    require: true,
+  },
+})
+
+const bookmarkSchema = new mongoose.Schema({
+bookmarkId: {
+  type: String,
+  require: true,
+  unique: true,
+  default: uuid,
+},
+userId: {
+  type: String,
+},
+bookSchemaId: {
+  type: String,
+  require: true,
+},
+})
+
 const userSchema = new mongoose.Schema(
   {
     userId: {
@@ -54,38 +86,6 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-const quotesSchema = new mongoose.Schema({
-    quotesId: {
-      type: String,
-      require: true,
-      unique: true,
-      default: uuid,
-    },
-    userId: {
-      type: String,
-    },
-    quotesDesc: {
-      type: String,
-      require: true,
-    },
-})
-
-const bookmarkSchema = new mongoose.Schema({
-  bookmarkId: {
-    type: String,
-    require: true,
-    unique: true,
-    default: uuid,
-  },
-  userId: {
-    type: String,
-  },
-  bookSchemaId: {
-    type: String,
-    require: true,
-  },
-})
 
 const userModel = mongoose.model("userDetails", userSchema);
 
